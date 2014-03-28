@@ -1,7 +1,7 @@
 ---
 layout: page
-title: LiuLu's Blog
-tagline: Life&work
+title: Embedded&Linux&Liulu
+tagline:  Life&work
 ---
 {% include JB/setup %}
 
