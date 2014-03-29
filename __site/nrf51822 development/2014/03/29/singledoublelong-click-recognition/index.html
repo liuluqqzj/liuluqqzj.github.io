@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        Single/double/long click recognition - 
+      
+      Liulu's blog
+    </title>
+    <meta name="description" content="">
+    <meta name="author" content="Liu Lu">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- fav and touch icons -->
+    <!-- Update these with your own images
+      <link rel="shortcut icon" href="images/favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    -->
+  </head>
+
+  <body>
+    <div id="page-wrap">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="container">
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+
+            <a class="brand" href="/">Liulu's blog</a>
+
+            <div class="nav-collapse">
+              <ul class="nav">
+                
+                
+                
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+              </ul>
+              <ul class="nav pull-right social visible-desktop">
+                <li class="divider-vertical"></li>
+                
+                <li>
+                  <a href="https://github.com/liuluqqzj" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+                
+                
+                
+                
+                
+                
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="content">
+          
+<div class="page-header">
+  <h1>
+    Single/double/long click recognition 
+    
+  </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    <p>题记：实现按键的单击这一单一功能可能会比较简单，但是要求识别多种操作就需要相对复杂的判断。对此，在大量占用CPU宝贵资源的提前下，本文中介绍了如何使用定时器中断及引脚中断的相互配合来实现按键响应的处理。 实现原理：1、可能大家常用的按键方式是拉低引脚电平来触发一次按键，在本文中采用的却是拉高引脚电平来触发一次按键。2、而在按键的过程中会出现“抖动”的情况，即按键按下的前几十毫秒引脚的电平跳变很厉害，采用延时10~20ms的方式再次检测引脚电平可避免抖动的影响。3、一次有效按键识别之后在其下降沿依次判断三种情况：a)这次按键是否超过2s，是则判为长按，结束。 b)否则，开启0.5s计时，0.5s内是否再次出现有效按键，是则判为双击，结束。c)否则，0.5s后超时，判为一次单击，结束。 具体实现如下：</p>
+
+<pre><code>1、 a)引脚初始化配置为输入下拉，上升沿中断。b)定时器配置为计时模式，同时将匹配寄存器的值根据当前滴答配置为CC[0] = 10ms， CC[3] = 0.5s，CC[1]用来计时；关闭定时器中断及定时器禁止。c）按键有效标识初始化为0，用来记录是否此次按键有效。此标识是长按、短按、双击成立的共同前提条件。
+
+2、 引脚识别一个上升沿跳变触发引脚中断：在中断函数中进入上升沿处理区域，清除引脚中断位，关闭引脚中断并配置为下降沿；开启定时器10ms计时。
+
+3、 定时器10ms匹配中断：关闭定时器中断，开启引脚中断。a)判断此时是否是高电平以及按键有效标识为0，是，则按键有效标识置1。b)判断此时是否是高电平以及按键有效标识为1,初次肯定不成立，后续处理见5。
+
+4、 引脚识别一个下降沿跳变触发引脚中断：在中断函数中进入下降沿处理区域，清除引脚中断位，配置引脚中断为上升沿；a)捕获此时的定时器计时到CC[1]，是否大于2s并且按键有效标识为1，是，则判为长按，定时器中断关闭，定时器关闭，清除CC[1]，有效按钮标识清零。b）否a)，判断有效按钮标识是否为1，是，开启定时器0.5s计时。
+
+5、 若0。5s内再次发生1、2、的情况，则依然进入3，此时按键有效标识已置1，则3中进入b处理: 执行到这里说明再次的按键有效在0.5s之内发生，判断为双击，定时器中断关闭，定时器关闭，清除CC[1]，有效按钮标识清零。
+
+6、 0.5s计时中断触发：此时表明0.5s内未发生5，则视为超时未检测到二次按键，判为单击，定时器中断关闭，定时器关闭，清除CC[1]，有效按钮标识清零。</code></pre>
+
+<p>代码如下：</p>
+
+<pre><code>#include &quot;button.h&quot;
+#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &quot;nrf.h&quot;
+#include &quot;nrf_gpio.h&quot;
+#include &quot;xprintf.h&quot;
+
+#define nRF_gpio_INT_pin         6     // 引脚(8)计时中断检测
+
+static uint8_t button_tmp = 0;
+// 0: nothing happened, 1:single-click, 2:double-click, 3:long-click 
+static uint8_t BUTTON_STATE = 0;
+
+//NRF_TIMER_Type * p_timer; //NRF_TIMER0/1/2
+#define p_timer             NRF_TIMER0
+
+// 中断事件处理函数
+void GPIOTE_IRQHandler()
+{
+	 // Event causing the interrupt must be cleared.
+	if((NRF_GPIOTE-&gt;EVENTS_IN[0] == 1) &amp;&amp; (NRF_GPIOTE-&gt;INTENSET &amp; GPIOTE_INTENSET_IN0_Msk) &amp;&amp; (NRF_GPIOTE-&gt;CONFIG[0] &amp;  (GPIOTE_CONFIG_POLARITY_HiToLo &lt;&lt; GPIOTE_CONFIG_POLARITY_Pos) ) ) //上升沿
+	{
+		NRF_GPIOTE-&gt;INTENSET  = GPIOTE_INTENSET_IN0_Disabled &lt;&lt; GPIOTE_INTENSET_IN0_Pos;     // 关GPIO引脚中断
+		NRF_GPIOTE-&gt;EVENTS_IN[0] = 0;
+		NRF_GPIOTE-&gt;CONFIG[0] =  (GPIOTE_CONFIG_POLARITY_LoToHi &lt;&lt; GPIOTE_CONFIG_POLARITY_Pos)
+						   | (nRF_gpio_INT_pin &lt;&lt; GPIOTE_CONFIG_PSEL_Pos)  
+						   | (GPIOTE_CONFIG_MODE_Event &lt;&lt; GPIOTE_CONFIG_MODE_Pos);
+			   
+		p_timer-&gt;TASKS_CLEAR = 1;
+		p_timer-&gt;INTENSET       = TIMER_INTENSET_COMPARE0_Enabled &lt;&lt; TIMER_INTENSET_COMPARE0_Pos;   // 开通延时中断1
+		p_timer-&gt;TASKS_START = 1;
+		//xprintf(&quot;High INT.\r\n&quot;);
+	}
+	// Event causing the interrupt must be cleared.
+	if((NRF_GPIOTE-&gt;EVENTS_IN[0] == 1) &amp;&amp; (NRF_GPIOTE-&gt;INTENSET &amp; GPIOTE_INTENSET_IN0_Msk) &amp;&amp; (NRF_GPIOTE-&gt;CONFIG[0] &amp;  (GPIOTE_CONFIG_POLARITY_LoToHi &lt;&lt; GPIOTE_CONFIG_POLARITY_Pos) ) )  // 下降沿
+		{
+			//xprintf(&quot;Low INT.\r\n&quot;);
+		   // NRF_GPIOTE-&gt;INTENSET  = GPIOTE_INTENSET_IN0_Disabled &lt;&lt; GPIOTE_INTENSET_IN0_Pos;     // 关GPIO引脚中断
+			NRF_GPIOTE-&gt;EVENTS_IN[0] = 0;
+			NRF_GPIOTE-&gt;CONFIG[0] =  (GPIOTE_CONFIG_POLARITY_HiToLo &lt;&lt; GPIOTE_CONFIG_POLARITY_Pos)
+						   | (nRF_gpio_INT_pin &lt;&lt; GPIOTE_CONFIG_PSEL_Pos)  
+						   | (GPIOTE_CONFIG_MODE_Event &lt;&lt; GPIOTE_CONFIG_MODE_Pos);
+			
+			p_timer-&gt;TASKS_CAPTURE[1] = 1;  // 获取当前的定时器计时
+			if( (p_timer-&gt;CC[1] &gt;= 28846) &amp;&amp; (button_tmp == 1) )   //  获得一次按键并且是长按
+			{
+				BUTTON_STATE = 3;
+				button_tmp  = 0;
+				p_timer-&gt;TASKS_STOP = 1;
+				p_timer-&gt;TASKS_CLEAR = 1;
+				p_timer-&gt;INTENSET = TIMER_INTENSET_COMPARE0_Disabled &lt;&lt; TIMER_INTENSET_COMPARE0_Pos; // 关定时器延时中断0
+				p_timer-&gt;INTENSET = TIMER_INTENSET_COMPARE3_Disabled &lt;&lt; TIMER_INTENSET_COMPARE3_Pos; // 关延时中断
+				xprintf(&quot;Long click.\r\n&quot;);
+			}
+			else
+			{
+				if(button_tmp == 1)    //  获得一次按键，但不是长按，开启1s 双击计时
+				{
+				   // p_timer-&gt;TASKS_CLEAR = 1;
+					//xprintf(&quot;1s jishi.\r\n&quot;);
+					p_timer-&gt;INTENSET      = TIMER_INTENSET_COMPARE3_Enabled &lt;&lt; TIMER_INTENSET_COMPARE3_Pos;   // 开延时中断2
+				}
+			}
+		  //NRF_GPIOTE-&gt;INTENSET  = GPIOTE_INTENSET_IN0_Set &lt;&lt; GPIOTE_INTENSET_IN0_Pos;     // 开GPIO引脚中断
+		}
+}
+void TIMER0_IRQHandler()
+{
+	if((p_timer-&gt;EVENTS_COMPARE[0] ==1) &amp;&amp; (p_timer-&gt;INTENSET &amp; TIMER_INTENSET_COMPARE0_Msk))     // 仅用来去抖延时
+	{
+		p_timer-&gt;EVENTS_COMPARE[0] = 0;
+		p_timer-&gt;INTENSET = TIMER_INTENSET_COMPARE0_Disabled &lt;&lt; TIMER_INTENSET_COMPARE0_Pos; // 关定时器延时中断0
+		//p_timer-&gt;TASKS_CLEAR = 1;
+		
+		NRF_GPIOTE-&gt;INTENSET  = GPIOTE_INTENSET_IN0_Enabled &lt;&lt; GPIOTE_INTENSET_IN0_Pos;     // 开GPIO引脚中断
+		
+		if((nrf_gpio_pin_read(8) &amp; 1) &amp;&amp; (button_tmp == 0))     // 一次有效高电平
+		{
+			button_tmp = 1;
+		   // xprintf(&quot;one ok.\r\n&quot;);
+		}
+		else 
+		{
+			if( (nrf_gpio_pin_read(8) &amp; 1) &amp;&amp; (button_tmp == 1))     // 检测到两次有效高电平 结束
+			{
+				p_timer-&gt;TASKS_STOP = 1;
+				p_timer-&gt;TASKS_CLEAR = 1;
+
+				p_timer-&gt;INTENSET = TIMER_INTENSET_COMPARE3_Enabled &lt;&lt; TIMER_INTENSET_COMPARE3_Disabled; // 关延时中断2
+				BUTTON_STATE = 2;
+				button_tmp = 0;
+				xprintf(&quot;Double click.\r\n&quot;);
+			}
+		}
+		//xprintf(&quot;10ms.\r\n&quot;);
+	}
+	if( (p_timer-&gt;EVENTS_COMPARE[3] ==1) &amp;&amp; (p_timer-&gt;INTENSET &amp; TIMER_INTENSET_COMPARE3_Msk) &amp;&amp; (nrf_gpio_pin_read(8) == 0 )&amp;&amp; (button_tmp == 1))  // 1s延时中断到达，只检测到一次
+	 {
+		 p_timer-&gt;EVENTS_COMPARE[3] = 0;
+		 p_timer-&gt;TASKS_STOP  = 1;
+		 p_timer-&gt;TASKS_CLEAR = 1;
+		 p_timer-&gt;INTENSET = TIMER_INTENSET_COMPARE0_Disabled &lt;&lt; TIMER_INTENSET_COMPARE0_Pos; // 关定时器延时中断0
+		 p_timer-&gt;INTENSET = TIMER_INTENSET_COMPARE3_Disabled &lt;&lt; TIMER_INTENSET_COMPARE3_Pos; // 关延时中断
+		 BUTTON_STATE = 1;
+		 button_tmp = 0;
+		 xprintf(&quot;Single click.\r\n&quot;);
+	 }
+}
+
+// gpio中断配置
+void nRF_gpio_INT_config()
+{
+  nrf_gpio_cfg_input(nRF_gpio_INT_pin, NRF_GPIO_PIN_PULLUP);
+	// Enable interrupt:
+  NVIC_EnableIRQ(GPIOTE_IRQn);
+   // 1,翻转 2,8引脚 3,事件模式
+  NRF_GPIOTE-&gt;CONFIG[0] =  (GPIOTE_CONFIG_POLARITY_HiToLo &lt;&lt; GPIOTE_CONFIG_POLARITY_Pos)
+						   | (nRF_gpio_INT_pin &lt;&lt; GPIOTE_CONFIG_PSEL_Pos)  
+						   | (GPIOTE_CONFIG_MODE_Event &lt;&lt; GPIOTE_CONFIG_MODE_Pos);
+	//使能中断
+  NRF_GPIOTE-&gt;INTENSET  = GPIOTE_INTENSET_IN0_Set &lt;&lt; GPIOTE_INTENSET_IN0_Pos;
+}
+
+
+void button_start()
+{
+	// Start 16 MHz crystal oscillator.
+	NRF_CLOCK-&gt;EVENTS_HFCLKSTARTED  = 0;    // HFCLK oscillator state = 0.
+	NRF_CLOCK-&gt;TASKS_HFCLKSTART     = 1;    // Start HFCLK clock source
+
+	// Wait for the external oscillator to start up.
+	while (NRF_CLOCK-&gt;EVENTS_HFCLKSTARTED == 0) 
+	{
+		// Do nothing.
+	}
+	p_timer-&gt;MODE           = TIMER_MODE_MODE_Timer;        // Set the timer in Timer Mode.
+	p_timer-&gt;PRESCALER      = 9;                            // Prescaler 9 produces 31250 Hz timer frequency =&gt; 1 tick = 32 us.
+	p_timer-&gt;BITMODE        = TIMER_BITMODE_BITMODE_32Bit;  // 16 bit mode.
+	/* Bit 16 : Enable interrupt on COMPARE[0] */
+	NVIC_EnableIRQ(TIMER0_IRQn);
+	
+	p_timer-&gt;TASKS_CLEAR    = 1;                            // clear the task first to be usable for later.
+	
+	//
+	p_timer-&gt;CC[0]          = 288;    // 15ms延时
+	p_timer-&gt;CC[1]          = 0;
+	p_timer-&gt;CC[2]          = 0;
+	p_timer-&gt;CC[3]          = 9615;    // 0.5s延时
+	
+	// p_timer-&gt;TASKS_START    = 1;                    // Start timer.
+
+	
+}</code></pre>
+    <hr>
+    <div class="pagination btn-group">
+      
+        <a class="btn prev" href="/nrf51822%20development/2014/03/29/rtc-clock-initialization" title="RTC clock initialization">&larr; Previous</a>
+      
+        <a class="btn" href="/archive.html">Archive</a>
+      
+        <a class="btn next" href="/git/ruby%20basic/2014/03/29/solve-the-problem-about-chinese-encoding" title="solve the problem about Chinese encoding">Next &rarr;</a>
+      
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'liuluqqzj'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <section>
+      <h4>Published</h4>
+      <div class="date"><span>29 March 2014</span></div>
+    </section>
+    
+      <section>
+        <h4>Category</h4>
+        <span class="category">
+          nRF51822 Development
+        </span>
+      </section>
+         
+    
+      <section>
+        <h4>Tags</h4>
+        <ul class="tag_box">
+          
+          
+
+
+  
+     
+    	<li><a href="/tags.html#nRF51822-ref">nRF51822 <span>1</span></a></li>
+    
+  
+
+
+
+        </ul>
+      </section>
+             
+  </div>
+</div>
+
+
+        </div>
+      </div> <!-- /container -->
+
+      <div class="footer-push"></div>
+    </div><!--/.page-wrap -->
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2014 Liu Lu
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+
