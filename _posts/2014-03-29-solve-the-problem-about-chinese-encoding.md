@@ -13,8 +13,9 @@ tags: []
 在文件路径：D:\Documents\Ruby200-x64\lib\ruby\gems\2.0.0\gems\jekyll-1.5.0\lib\jekyll 的文件：convertible.rb 。 在大概38行有这样一段代码：
 	
 	begin
-		self.content = File.read_with_options(File.join(base, name),:encoding=>"utf-8")  // 替换成utf-8编码
-		                                     # merged_file_read_opts(opts))              // 此处注释掉了
+		self.content = File.read_with_options(File.join(base, name),
+		                     :encoding=>"utf-8")  // 替换成utf-8编码
+		          # merged_file_read_opts(opts))  // 此处注释掉了
 保存，再编译，应该就没问题了。
 
 ###注意：
