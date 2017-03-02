@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>喵兄研发日记</title>
+  <title>大喵兄的研发日记</title>
   
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://hardfault.cn/"/>
-  <updated>2017-02-21T14:27:29.239Z</updated>
+  <updated>2017-03-02T15:00:42.427Z</updated>
   <id>http://hardfault.cn/</id>
   
   <author>
@@ -20,13 +20,18 @@
     <link href="http://hardfault.cn/2017/02/20/nRF52/2%20nRF52%20Blinky%20FreeRTOS%20%E4%BE%8B%E7%A8%8B%E5%88%86%E6%9E%90/"/>
     <id>http://hardfault.cn/2017/02/20/nRF52/2 nRF52 Blinky FreeRTOS 例程分析/</id>
     <published>2017-02-19T16:00:00.000Z</published>
-    <updated>2017-02-21T14:27:29.239Z</updated>
+    <updated>2017-03-02T15:00:42.427Z</updated>
     
     <summary type="html">
     
-      &lt;p&gt;除非注明，本站博客均为原创或翻译，转载请务必注明出处并保留原文链接：文章来源于&lt;a href=&quot;http://liuluqqzj.github.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;喵兄研发日记&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;除非注明，本站博客均为原创或翻译，转载请务必注明出处并保留原文链接：文章来源于&lt;a href=&quot;http://liuluqqzj.github.io/&quot;&gt;喵兄研发日记&lt;/a&gt;&lt;/p&gt;
 &lt;hr&gt;
-&lt;p&gt;[TOC]&lt;
+&lt;p&gt;[TOC]&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;工程简介&quot;&gt;&lt;a href=&quot;#工程简介&quot; class=&quot;headerlink&quot; title=&quot;工程简介&quot;&gt;&lt;/a&gt;工程简介&lt;/h2&gt;&lt;p&gt;​    与上一个例程不同之处在于，本工程中添加有FreeRTOS，犹记得当年用nRF51822时，对第三方的RTOS支持还不是太好。&lt;/p&gt;
+&lt;h2 id=&quot;代码分析&quot;&gt;&lt;a href=&quot;#代码分析&quot; class=&quot;headerlink&quot; title=&quot;代码分析&quot;&gt;&lt;/a&gt;代码分析&lt;/h2&gt;&lt;p&gt;​    直接上图，main函数中的代码如下，主要分三段：设备时钟初始化、LED引脚设置以及创建任务及定时器，最后启动任务调度。                &lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;\images\nRF52\2\QQ截图20170220161409.png&quot; alt=&quot;QQ截图20170220161409&quot;&gt;&lt;/p&gt;
+&lt;p&gt;​    引脚相关配置、控制逻辑这里不再详述，参考（一）即可，先看设备时钟部分，再看RTOS。&lt;/p&gt;
     
     </summary>
     
@@ -40,13 +45,17 @@
     <link href="http://hardfault.cn/2017/02/18/nRF52/1%20nRF52%20Blinky%20%E4%BE%8B%E7%A8%8B%E5%88%86%E6%9E%90/"/>
     <id>http://hardfault.cn/2017/02/18/nRF52/1 nRF52 Blinky 例程分析/</id>
     <published>2017-02-17T16:00:00.000Z</published>
-    <updated>2017-02-21T14:27:22.443Z</updated>
+    <updated>2017-03-02T15:00:33.480Z</updated>
     
     <summary type="html">
     
-      &lt;p&gt;除非注明，本站博客均为原创或翻译，转载请务必注明出处并保留原文链接：文章来源于&lt;a href=&quot;http://liuluqqzj.github.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;喵兄研发日记&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;除非注明，本站博客均为原创或翻译，转载请务必注明出处并保留原文链接：文章来源于&lt;a href=&quot;http://liuluqqzj.github.io/&quot;&gt;喵兄研发日记&lt;/a&gt;&lt;/p&gt;
 &lt;hr&gt;
-&lt;p&gt;[TOC]&lt;
+&lt;p&gt;[TOC]&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;工程简介&quot;&gt;&lt;a href=&quot;#工程简介&quot; class=&quot;headerlink&quot; title=&quot;工程简介&quot;&gt;&lt;/a&gt;工程简介&lt;/h2&gt;&lt;p&gt;​    Noridc官方提供了多种开发环境下的例程，首先选择评估板的型号，比如我的是pca10040，再选择自己要用的开发环境，此处选择的环境是Keil4，因此本文的例程路径如图所示：&lt;/p&gt;
+&lt;p&gt;​                &lt;img src=&quot;\images\nRF52\1\QQ截图20170217113148.png&quot; alt=&quot;QQ截图20170217113148&quot;&gt;                                    &lt;/p&gt;
+&lt;p&gt;​    简单说明一下，blinky\ 目录下的blinky.eww为IAR工程，blinky\pca10040\下有两个文件夹blank和s132，一个不包含软设备库，一个包含，在此Demo中任选一个皆可。例如blank下又有众多工程配置，根据自己的开发工具选择即可。&lt;/p&gt;
     
     </summary>
     
@@ -60,13 +69,16 @@
     <link href="http://hardfault.cn/2017/02/17/nRF52/0%20nRF52%20%E7%A1%AC%E4%BB%B6%E7%AE%80%E4%BB%8B/"/>
     <id>http://hardfault.cn/2017/02/17/nRF52/0 nRF52 硬件简介/</id>
     <published>2017-02-16T16:00:00.000Z</published>
-    <updated>2017-02-21T14:27:14.769Z</updated>
+    <updated>2017-03-02T15:00:16.599Z</updated>
     
     <summary type="html">
     
-      &lt;p&gt;除非注明，本站博客均为原创或翻译，转载请务必注明出处并保留原文链接：文章来源于&lt;a href=&quot;http://liuluqqzj.github.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;喵兄研发日记&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;除非注明，本站博客均为原创或翻译，转载请务必注明出处并保留原文链接：文章来源于&lt;a href=&quot;http://liuluqqzj.github.io/&quot;&gt;喵兄研发日记&lt;/a&gt;&lt;/p&gt;
 &lt;hr&gt;
-&lt;p&gt;[TOC]&lt;
+&lt;p&gt;[TOC]&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;开箱清单&quot;&gt;&lt;a href=&quot;#开箱清单&quot; class=&quot;headerlink&quot; title=&quot;开箱清单&quot;&gt;&lt;/a&gt;开箱清单&lt;/h2&gt;&lt;p&gt;​    nRF52评估板购买于贸泽商城，含税300大洋。里面除了nRF52主板以外，还包含5枚nRF52832芯片以及一片NFC线圈。&lt;br&gt;&lt;img src=&quot;\images\nRF52\0\IMG_4608.JPG&quot; alt=&quot;IMG_4608&quot;&gt;&lt;/p&gt;
+&lt;p&gt;​                                    图1. 购买清单合影&lt;/p&gt;
     
     </summary>
     
