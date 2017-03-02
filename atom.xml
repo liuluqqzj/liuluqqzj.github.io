@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>喵兄研发日记</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://hardfault.cn/"/>
+  <updated>2017-02-21T14:27:29.239Z</updated>
+  <id>http://hardfault.cn/</id>
+  
+  <author>
+    <name>Liu Lu</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>（二）nRF52 Blinky FreeRTOS 例程分析</title>
+    <link href="http://hardfault.cn/2017/02/20/nRF52/2%20nRF52%20Blinky%20FreeRTOS%20%E4%BE%8B%E7%A8%8B%E5%88%86%E6%9E%90/"/>
+    <id>http://hardfault.cn/2017/02/20/nRF52/2 nRF52 Blinky FreeRTOS 例程分析/</id>
+    <published>2017-02-19T16:00:00.000Z</published>
+    <updated>2017-02-21T14:27:29.239Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;除非注明，本站博客均为原创或翻译，转载请务必注明出处并保留原文链接：文章来源于&lt;a href=&quot;http://liuluqqzj.github.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;喵兄研发日记&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;[TOC]&lt;
+    
+    </summary>
+    
+      <category term="nRF52 系列" scheme="http://hardfault.cn/categories/nRF52-%E7%B3%BB%E5%88%97/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>（一）nRF52 Binky 例程分析</title>
+    <link href="http://hardfault.cn/2017/02/18/nRF52/1%20nRF52%20Blinky%20%E4%BE%8B%E7%A8%8B%E5%88%86%E6%9E%90/"/>
+    <id>http://hardfault.cn/2017/02/18/nRF52/1 nRF52 Blinky 例程分析/</id>
+    <published>2017-02-17T16:00:00.000Z</published>
+    <updated>2017-02-21T14:27:22.443Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;除非注明，本站博客均为原创或翻译，转载请务必注明出处并保留原文链接：文章来源于&lt;a href=&quot;http://liuluqqzj.github.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;喵兄研发日记&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;[TOC]&lt;
+    
+    </summary>
+    
+      <category term="nRF52 系列" scheme="http://hardfault.cn/categories/nRF52-%E7%B3%BB%E5%88%97/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>（〇）nRF52 硬件介绍</title>
+    <link href="http://hardfault.cn/2017/02/17/nRF52/0%20nRF52%20%E7%A1%AC%E4%BB%B6%E7%AE%80%E4%BB%8B/"/>
+    <id>http://hardfault.cn/2017/02/17/nRF52/0 nRF52 硬件简介/</id>
+    <published>2017-02-16T16:00:00.000Z</published>
+    <updated>2017-02-21T14:27:14.769Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;除非注明，本站博客均为原创或翻译，转载请务必注明出处并保留原文链接：文章来源于&lt;a href=&quot;http://liuluqqzj.github.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;喵兄研发日记&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;[TOC]&lt;
+    
+    </summary>
+    
+      <category term="nRF52 系列" scheme="http://hardfault.cn/categories/nRF52-%E7%B3%BB%E5%88%97/"/>
+    
+    
+  </entry>
+  
+</feed>
